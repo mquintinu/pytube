@@ -1,0 +1,45 @@
+>>> Para instalar o Kiv:
+
+-- Cria um diretório virtual
+python -m virtualenv kivy_virtual
+
+-- Ativa o diretório virtual:
+kivy_virtual\Scripts\activate
+
+-- Instala o Kiv:
+py -m pip install kivy[base] kivy_examples
+
+-- Instala o PyTube
+pip install pytube 
+
+>>> Para gerar um executável:
+
+*Abrir o VS Code como Administrador (ou o editor que estiver usando)*
+
+-- Acessar o diretório virtual e instalar o PyInstaller:
+pip install pyinstaller
+
+-- Verificar a instalação:
+pip freeze
+
+-- Faz o build do arquivo Python:
+pyinstaller PyTube.py -w
+
+-- Acessar o arquivo .spec gerado e incluir os seguintes trechos:
+> ...na primeira linha do arquivo:
+from kivy_deps import sdl2, glew
+
+> ...entre o pyz e o exe: 
+a.datas += [('Code\interface.kv',
+             'C:\\Users\\Mateus Quintino\\OneDrive\\Documentos\\Estudo\\Cursos\\Projetos\\Youtube_down\interface.kv', 'DATA')]
+
+> ... na sessão coll, após "exe," incluir:
+Tree('C:\\Users\\Mateus Quintino\\OneDrive\\Documentos\\Estudo\\Cursos\\Projetos\\Youtube_down'),
+
+> ... na sessão coll, embaixo de "a.datas," incluir:
+*[Tree(p) for p in (sdl2.dep_bins + glew.dep_bins)],
+
+-- Após editar, salvar e fechar o arquivo, executar no prompt / shell:
+pyinstaller PyTube.spec -y
+
+-- Se estiver tudo de acordo, o executável é gerado dentro da pasta "dist", no mesmo diretório do projeto!
